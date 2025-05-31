@@ -11,8 +11,10 @@ Ideal implementation is probably in your Discord bot or wherever you like gettin
 
 ## Usage
 
+`git clone https://github.com/sekuso/SteamFreeStuff`
+
 ```py
-from steam_freebies import all_new_free_games
+from SteamFreeStuff.steam_freebies import all_new_free_games
 
 all_new_free_games(["76561198000000001", "76561198000000002"])
 ```
