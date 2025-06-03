@@ -109,12 +109,8 @@ def all_new_free_games(api_key: str, steam_ids: list = None) -> dict:
             time.sleep(1)
     elif appids:
         try:
-            ids = free_games.get('response', {}).get('ids', [])
-            appid_games = [entry for entry in ids if 'appid' in entry]
-            appids = [entry['appid'] for entry in appid_games]
-            if appids:
-                data = _get_app_names(appids)
-                missing_games['all'] = data
+            data = _get_app_names(appids)
+            missing_games['all'] = data
         except Exception as e:
             logging.error(f"Error fetching app names: {e}")
             return {}
