@@ -16,7 +16,7 @@ Ideal implementation is probably in your Discord bot or wherever you like gettin
 ```py
 from SteamFreeStuff.steam_freebies import all_new_free_games
 
-all_new_free_games(["76561198000000001", "76561198000000002"])
+all_new_free_games(api_key="ABC12345678910", steam_ids=["76561198000000001", "76561198000000002"])
 ```
 
 The all_new_free_games function returns a dict mapping each Steam ID to a list of (appid, name) tuples

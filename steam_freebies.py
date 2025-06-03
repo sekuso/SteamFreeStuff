@@ -26,7 +26,7 @@ def _get_owned_appids(steamid: str, api_key: str) -> set:
         print(f"Error fetching owned games: {response.status_code}")
         return set()
 
-def _get_free_games(api_key: str):
+def _get_free_games(api_key: str) -> json:
     """Fetches free games from the Steam Store Query API. Returns a JSON response containing free games."""
     logging.debug("Fetching free games from Steam Store Query API")
     input_json = {
@@ -80,7 +80,7 @@ def _get_app_names(appids):
                 results.append((appid, name))
     return results
 
-def all_new_free_games(steam_ids: list, api_key: str) -> dict:
+def all_new_free_games(api_key: str, steam_ids: list = None) -> dict:
     """
     Returns a dict mapping each Steam ID to a list of (appid, name) tuples
     for free games that are unowned by that user.
@@ -99,12 +99,24 @@ def all_new_free_games(steam_ids: list, api_key: str) -> dict:
     # Dict to hold results for each Steam ID
     missing_games = {}
 
-    for steamid in steam_ids:
-        owned_appids = _get_owned_appids(steamid, api_key)
-        logging.debug(f"Owned appids for {steamid}: {owned_appids}")
-        unowned_appids = [appid for appid in appids if appid not in owned_appids]
-        free_game_names = _get_app_names(unowned_appids) if unowned_appids else []
-        missing_games[steamid] = free_game_names
-        time.sleep(1)
+    if steam_ids and appids:
+        for steamid in steam_ids:
+            owned_appids = _get_owned_appids(steamid, api_key)
+            logging.debug(f"Owned appids for {steamid}: {owned_appids}")
+            unowned_appids = [appid for appid in appids if appid not in owned_appids]
+            free_game_names = _get_app_names(unowned_appids) if unowned_appids else []
+            missing_games[steamid] = free_game_names
+            time.sleep(1)
+    elif appids:
+        try:
+            ids = free_games.get('response', {}).get('ids', [])
+            appid_games = [entry for entry in ids if 'appid' in entry]
+            appids = [entry['appid'] for entry in appid_games]
+            if appids:
+                data = _get_app_names(appids)
+                missing_games['all'] = data
+        except Exception as e:
+            logging.error(f"Error fetching app names: {e}")
+            return {}
 
     return missing_games
