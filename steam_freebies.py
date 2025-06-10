@@ -15,7 +15,8 @@ def _get_owned_appids(steamid: str, api_key: str) -> set:
     params = {
         "key": api_key,
         "steamid": steamid,
-        "include_appinfo": False
+        "include_appinfo": False,
+        "timestamp": str(int(time.time()))
     }
     response = requests.get(url, params=params)
     if response.status_code == 200:
@@ -52,7 +53,8 @@ def _get_free_games(api_key: str) -> json:
 
     params = {
         "key": api_key,
-        "input_json": json.dumps(input_json)
+        "input_json": json.dumps(input_json),
+        "timestamp": str(int(time.time()))
     }
     
     response = requests.get(store_query_url, params=params)
@@ -70,7 +72,7 @@ def _get_app_names(appids):
     results = []
     for appid in appids:
         url = f"https://store.steampowered.com/api/appdetails"
-        params = {"appids": appid}
+        params = {"appids": appid, "timestamp": str(int(time.time()))}
         response = requests.get(url, params=params)
         if response.status_code == 200:
             data = response.json()
